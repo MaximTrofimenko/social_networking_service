@@ -11,6 +11,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("message")
 public class MessageController {
+
     private int count = 4;
 
     private List<Map<String,String>> messages = new ArrayList<Map<String,String>>(){{
@@ -29,7 +30,7 @@ public class MessageController {
         return getMessage(id);
     }
 
-    private Map<String, String> getMessage(@PathVariable String id) {
+    private Map<String, String> getMessage(String id) {
         return messages.stream()
                 .filter(messages -> messages.get("id").equals(id))
                 .findFirst()
@@ -41,12 +42,11 @@ public class MessageController {
         message.put("id",String.valueOf(count));
         messages.add(message);
         return message;
-
     }
 
     @PutMapping("{id}")
     public Map<String,String> update(@PathVariable String id, @RequestBody Map<String,String> message){
-        Map<String, String> messageFromDb = getMessage(message.get("id")); //получаем сообщение из базы
+        Map<String, String> messageFromDb = getMessage(id); //получаем сообщение из базы
 
         messageFromDb.putAll(message);//объединяем две мапы в одну
         messageFromDb.put("id",id);   //устанавливаем тот id по которому был запрос
@@ -54,5 +54,9 @@ public class MessageController {
         return messageFromDb;
     }
 
-
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable String id){
+        Map<String, String> message = getMessage(id);
+        messages.remove(message);
+    }
 }
