@@ -26,6 +26,10 @@ public class MessageController {
 
     @GetMapping("{id}")
     public Map<String,String> getOne(@PathVariable String id){
+        return getMessage(id);
+    }
+
+    private Map<String, String> getMessage(@PathVariable String id) {
         return messages.stream()
                 .filter(messages -> messages.get("id").equals(id))
                 .findFirst()
@@ -39,5 +43,16 @@ public class MessageController {
         return message;
 
     }
+
+    @PutMapping("{id}")
+    public Map<String,String> update(@PathVariable String id, @RequestBody Map<String,String> message){
+        Map<String, String> messageFromDb = getMessage(message.get("id")); //получаем сообщение из базы
+
+        messageFromDb.putAll(message);//объединяем две мапы в одну
+        messageFromDb.put("id",id);   //устанавливаем тот id по которому был запрос
+
+        return messageFromDb;
+    }
+
 
 }
