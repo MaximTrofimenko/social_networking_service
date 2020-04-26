@@ -1,6 +1,8 @@
 package com.trofimenko.social_networking_service.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.trofimenko.social_networking_service.domain.Message;
+import com.trofimenko.social_networking_service.domain.Views;
 import com.trofimenko.social_networking_service.exeptions.NotFoundException;
 import com.trofimenko.social_networking_service.repository.MessageRepository;
 import org.springframework.beans.BeanUtils;
@@ -23,11 +25,13 @@ public class MessageController {
     }
 
     @GetMapping
+    @JsonView(Views.IdName.class)
     public List<Message> list(){
         return messageRepository.findAll();
     }
 
     @GetMapping("{id}")
+    @JsonView(Views.FullMessage.class)
     public Message getOne(@PathVariable("id") Message message){
         return message;
     }
