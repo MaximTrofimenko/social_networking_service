@@ -1,0 +1,9 @@
+spring:
+ datasource:
+  url: jdbc:postgresql://localhost/social_network_service
+  username: postgres
+  password: 123
+ jpa:
+  generate-ddl: true
+  properties.hibernate.jdbc.lob.non_contextual_creation: true
+
