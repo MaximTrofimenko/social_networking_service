@@ -1,10 +1,12 @@
 package com.trofimenko.social_networking_service.controller;
 
+import com.trofimenko.social_networking_service.domain.Message;
 import com.trofimenko.social_networking_service.exeptions.NotFoundException;
+import com.trofimenko.social_networking_service.repository.MessageRepository;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,54 +14,39 @@ import java.util.Map;
 @RequestMapping("message")
 public class MessageController {
 
-    private int count = 4;
+    private final MessageRepository messageRepository;
 
-    private List<Map<String,String>> messages = new ArrayList<Map<String,String>>(){{
-        add(new HashMap<String, String>(){{put("id","1");put("text","First message");}});
-        add(new HashMap<String, String>(){{put("id","2");put("text","Second message");}});
-        add(new HashMap<String, String>(){{put("id","3");put("text","Third message");}});
-    }};
+    @Autowired
+    public MessageController(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
     @GetMapping
-    public List<Map<String,String>> list(){
-        return messages;
+    public List<Message> list(){
+        return messageRepository.findAll();
     }
 
     @GetMapping("{id}")
-    public Map<String,String> getOne(@PathVariable String id){
-        return getMessage(id);
-    }
-
-    private Map<String, String> getMessage(String id) {
-        return messages.stream()
-                .filter(messages -> messages.get("id").equals(id))
-                .findFirst()
-                .orElseThrow(NotFoundException::new);
-    }
-
-    @PostMapping
-    public Map<String,String> create(@RequestBody Map<String,String> message){
-        message.put("id",String.valueOf(count));
-        messages.add(message);
+    public Message getOne(@PathVariable("id") Message message){
         return message;
     }
 
+    @PostMapping
+    public Message create(@RequestBody Message message){
+        return messageRepository.save(message);
+    }
+
     @PutMapping("{id}")
-    public Map<String,String> update(@PathVariable String id, @RequestBody Map<String,String> message){
-        Map<String, String> messageFromDb = getMessage(id); //получаем сообщение из базы
-
-        messageFromDb.putAll(message);/*объединяем две мапы в одну,
-        в данном случае происходит перезаписывание значения мапы так как id у них совпадают,
-        мы как бы одну затираем другой*/
-
-        messageFromDb.put("id",id);   //устанавливаем тот id по которому был запрос, так как после предидущей опереции id мог измениться
-
-        return messageFromDb;
+    public Message update(
+            @PathVariable("id") Message messageFromDb,
+            @RequestBody Message message
+    ){
+        BeanUtils.copyProperties(message,messageFromDb,"id"); //копируем даннные из одного объекта в другой игнорируя поле id
+        return messageRepository.save(messageFromDb);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable String id){
-        Map<String, String> message = getMessage(id);
-        messages.remove(message);
+    public void delete(@PathVariable("id") Message message){
+       messageRepository.delete(message);
     }
 }
