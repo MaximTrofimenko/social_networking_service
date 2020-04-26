@@ -48,8 +48,11 @@ public class MessageController {
     public Map<String,String> update(@PathVariable String id, @RequestBody Map<String,String> message){
         Map<String, String> messageFromDb = getMessage(id); //получаем сообщение из базы
 
-        messageFromDb.putAll(message);//объединяем две мапы в одну
-        messageFromDb.put("id",id);   //устанавливаем тот id по которому был запрос
+        messageFromDb.putAll(message);/*объединяем две мапы в одну,
+        в данном случае происходит перезаписывание значения мапы так как id у них совпадают,
+        мы как бы одну затираем другой*/
+
+        messageFromDb.put("id",id);   //устанавливаем тот id по которому был запрос, так как после предидущей опереции id мог измениться
 
         return messageFromDb;
     }
