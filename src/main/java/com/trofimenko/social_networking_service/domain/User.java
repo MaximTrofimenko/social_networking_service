@@ -1,5 +1,7 @@
 package com.trofimenko.social_networking_service.domain;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usr")
+@Data
 public class User {
     @Id
     private String id;
@@ -14,7 +17,6 @@ public class User {
     private String userpic;
     private String email;
     private String gender;
-    private String locate;
+    private String locale;
     private LocalDateTime lastVisit;
-
 }
