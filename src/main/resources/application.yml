@@ -9,6 +9,13 @@ spring:
  main:
   allow-bean-definition-overriding: true
 
+ session:
+  jdbc:
+   initialize-schema: always
+   table-name: SPRING_SESSION
+   schema:
+    classpath: session_tables.sql
+
 
 security:
  oauth2:
@@ -25,4 +32,5 @@ security:
 
 server:
  port: 8080
+
 
